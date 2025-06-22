@@ -2,6 +2,7 @@ import shutil
 from pathlib import Path
 from bpy.props import StringProperty, CollectionProperty, IntProperty, BoolProperty, EnumProperty
 from bpy.types import PropertyGroup, UIList, Panel, Operator, Menu, AddonPreferences
+from send2trash import send2trash
 
 from .icons import load_icons
 
@@ -54,7 +55,8 @@ def detect_and_set_root_folder(context):
     # Auto-detect root folder if enabled and not already set
     if prefs.auto_detect_root:
         # Check current text editor file for addon structure
-        text = context.space_data.text if hasattr(context.space_data, 'text') else None
+        text = context.space_data.text if hasattr(
+            context.space_data, 'text') else None
 
         if text and text.filepath:
             file_path = bpy.path.abspath(text.filepath)
@@ -866,7 +868,8 @@ class FILE_BROWSER_OT_create_new_file(bpy.types.Operator):
             if self.selected_template != "BLANK":
                 search_paths = [Path(__file__).parent / "templates"]
                 if prefs.template_dir:
-                    search_paths.insert(0, Path(bpy.path.abspath(prefs.template_dir)))
+                    search_paths.insert(
+                        0, Path(bpy.path.abspath(prefs.template_dir)))
 
                 for path in search_paths:
                     tpath = path / self.selected_template
@@ -1055,7 +1058,8 @@ class FILE_BROWSER_OT_delete_item(Operator):
                 if getattr(self, "_permanent_delete", False):
                     # Permanent deletion
                     if item.is_folder:
-                        shutil.rmtree(str(item_path), onerror=self.handle_remove_readonly)
+                        shutil.rmtree(str(item_path),
+                                      onerror=self.handle_remove_readonly)
                     else:
                         item_path.chmod(0o666)  # Make writable just in case
                         item_path.unlink()
@@ -1063,13 +1067,14 @@ class FILE_BROWSER_OT_delete_item(Operator):
                 else:
                     # Move to trash using send2trash
                     try:
-                        from send2trash import send2trash
                         send2trash(str(item_path))
                         self.report({'INFO'}, f"Moved to trash: {item.name}")
                     except Exception as e:
-                        self.report({'WARNING'}, f"Failed to move to trash, permanently deleted instead: {e}")
+                        self.report(
+                            {'WARNING'}, f"Failed to move to trash, permanently deleted instead: {e}")
                         if item.is_folder:
-                            shutil.rmtree(str(item_path), onerror=self.handle_remove_readonly)
+                            shutil.rmtree(str(item_path),
+                                          onerror=self.handle_remove_readonly)
                         else:
                             item_path.chmod(0o666)
                             item_path.unlink()
@@ -1297,7 +1302,7 @@ class FILE_BROWSER_AddonPreferences(AddonPreferences):
         description="Adjust file list height dynamically based on file count",
         default=True,
     )
-    
+
     template_dir: StringProperty(
         name="Custom Template Directory",
         subtype='DIR_PATH',
@@ -1370,7 +1375,7 @@ def register():
     if kc:
         km = kc.keymaps.new(name='Text', space_type='TEXT_EDITOR')
         kmi = km.keymap_items.new(
-            "file_browser.show_popup", type='ACCENT_GRAVE', value='PRESS', ctrl=True)
+            "file_browser.show_popup", type='F', value='PRESS', alt=True)
         addon_keymaps.append((km, kmi))
 
     load_icons.load_custom_icons()
