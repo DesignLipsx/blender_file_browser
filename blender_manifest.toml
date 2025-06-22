@@ -4,10 +4,12 @@ schema_version = "1.0.0"
 id = "file_broswer"
 version = "1.0.0"
 name = "File Browser"
-tagline = "Enhanced file browser for Blender's text editor"
+tagline = "Powerful file browser for Blender’s scripting workflow"
 maintainer = "Jishnu kv <jishnukv661@gmail.com>"
 # Supported types: "add-on", "theme"
 type = "add-on"
+
+website = "https://github.com/DesignLipsx/blender_file_browser"
 
 blender_version_min = "4.2.0"
 
@@ -15,7 +17,9 @@ license = [
   "SPDX:GPL-3.0-or-later",
 ]
 
-
 wheels = [
    "./wheels/Send2Trash-1.8.3-py3-none-any.whl",
 ]
+
+[permissions]
+files = "Access directories and perform operations like scanning, creating, and deleting files"
